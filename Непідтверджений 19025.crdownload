@@ -1,0 +1,83 @@
+// Добавьте в начало файла
+let currentTheme = 'dark';
+
+// Обновите функцию toggleTheme
+function toggleTheme() {
+    currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.body.classList.toggle("light-theme");
+    localStorage.setItem('theme', currentTheme);
+    
+    // Плавное изменение темы
+    document.body.style.transition = 'background 0.5s, color 0.5s';
+    setTimeout(() => document.body.style.transition = '', 500);
+}
+
+// Добавьте новую функцию для уведомлений
+function showNotification(message) {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.style.display = 'block';
+    notification.style.animation = 'none';
+    void notification.offsetWidth;
+    notification.style.animation = 'fadeOut 3s forwards';
+}
+
+// Обновите функцию translate
+function translate() {
+    const input = document.getElementById("input").value.trim();
+    if (!input) {
+        showNotification("Please enter text to translate!");
+        return;
+    }
+
+    try {
+        sounds.click.play().catch(e => console.error("Sound error:", e));
+        
+        let output = input.toLowerCase();
+        for (const [word, translation] of Object.entries(dictionary)) {
+            const regex = new RegExp(`\\b${word}\\b`, 'gi');
+            output = output.replace(regex, translation);
+        }
+
+        output = output.toUpperCase();
+        const glyphOutput = output.split('').map(char => glyphs[char] || char).join('');
+
+        document.getElementById("output").textContent = output;
+        document.getElementById("glyphs").innerHTML = glyphOutput.split("").map(g =>
+            `<span class="glyph" onclick="speak('${g}')" title="Click to hear">${g}</span>`
+        ).join("");
+
+        if (Math.random() > 0.7) {
+            sounds.bell.play().catch(e => console.error("Bell sound error:", e));
+        }
+    } catch (error) {
+        console.error("Translation error:", error);
+        showNotification("Translation failed. Please try again.");
+    }
+}
+
+// Обновите обработчик клика по output
+document.getElementById("output").addEventListener("click", function() {
+    navigator.clipboard.writeText(this.textContent)
+        .then(() => showNotification("📋 Copied to clipboard!"))
+        .catch(() => showNotification("❌ Copy failed"));
+});
+
+// Добавьте при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    // Восстановление темы
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-theme');
+        currentTheme = 'light';
+    }
+    
+    // Предзагрузка звуков
+    Object.values(sounds).forEach(sound => {
+        sound.load();
+        sound.volume = 0.6;
+    });
+    
+    // Фокус на поле ввода
+    document.getElementById('input').focus();
+});

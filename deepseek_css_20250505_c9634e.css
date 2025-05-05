@@ -1,0 +1,45 @@
+/* Добавьте в конец файла */
+@media (max-width: 600px) {
+    textarea {
+        width: 90%;
+        margin: 10px auto;
+    }
+    button {
+        padding: 12px 20px;
+        font-size: 16px;
+    }
+    .glyph {
+        font-size: 28px;
+        margin: 3px;
+    }
+}
+
+.theme-toggle {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 100;
+}
+
+.notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    padding: 10px 20px;
+    border-radius: 20px;
+    animation: fadeOut 3s forwards;
+    opacity: 0;
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; }
+}
